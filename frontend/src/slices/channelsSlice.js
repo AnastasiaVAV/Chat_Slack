@@ -1,15 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const initialState = {
+  channels: [],
+  openChannel: {},
+}
+
 const channelsSlice = createSlice({
   name: 'channels',
-  initialState: [],
+  initialState,
   reducers: {
-    setChannels: (state, action) => {
-      console.log('channels:', action.payload)
-      return action.payload;
-    }
-  }
+    setChannels: (state, { payload }) => {
+      console.log('channels:', payload)
+      return { ...state, channels: payload }
+    },
+    setOpenChannel: (state, { payload }) => {
+      return { ...state, openChannel: payload }
+    },
+  },
 })
 
-export const { setChannels } = channelsSlice.actions
+export const { actions } = channelsSlice
 export default channelsSlice.reducer

@@ -19,7 +19,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </Provider>
-  );
+  )
 }
 
 export default App
