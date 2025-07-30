@@ -4,14 +4,17 @@ import getUserId from '../utils/getUserId'
 const initialState = getUserId()
 
 const authSlice = createSlice({
-  name: 'users',
+  name: 'authorization',
   initialState,
   reducers: {
-    logIn: (state, action) => {
-      state = action.payload
-    }
-  }
+    logIn: (state, { payload }) => {
+      return payload
+    },
+    logOut: () => {
+      return null
+    },
+  },
 })
 
-export const { logIn } = authSlice.actions
+export const { actions } = authSlice
 export default authSlice.reducer

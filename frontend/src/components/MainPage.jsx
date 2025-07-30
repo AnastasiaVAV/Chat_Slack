@@ -1,7 +1,21 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Container, Col } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { actions as authActions } from '../slices/authSlice.js'
 
 const MainPage = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const user = useSelector(state => state.authorization)
+  console.log('user', user)
+
+  const handleLogout = () => {
+    localStorage.removeItem('userId')
+    dispatch(authActions.logOut())
+    navigate('login')
+  }
+
   return (
     <div className="vh-100">
       <div className="h-100" id="chat">
@@ -9,6 +23,15 @@ const MainPage = () => {
           <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
             <Container>
               <Link to="/" className="navbar-brand">Hexlet Chat</Link>
+              {user && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleLogout}
+                >
+                  Выйти
+                </button>
+              )}
             </Container>
           </nav>
           <Outlet />

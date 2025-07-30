@@ -1,12 +1,15 @@
-import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { useRef, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+
+import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
+
 import axios from 'axios'
-import { logIn } from '../slices/authSlice.js'
 import routes from '../routes.js'
+
+import { actions as authActions } from '../slices/authSlice.js'
 import avatarImage from '../assets/avatar-login.jpg'
 
 const LoginPage = () => {
@@ -26,11 +29,11 @@ const LoginPage = () => {
       password: '',
     },
     onSubmit: async (values) => {
-      setAuthFailed(false)
       try {
         const res = await axios.post(routes.loginPath(), values)
         localStorage.setItem('userId', JSON.stringify(res.data))
-        dispatch(logIn(res.data))
+        dispatch(authActions.logIn(res.data))
+        setAuthFailed(false)
         navigate('/')
       }
       catch (err) {
@@ -51,11 +54,11 @@ const LoginPage = () => {
           <Card className="shadow-sm">
             <Row className="card-body p-5">
               <Col md={6} xs={12} className="d-flex align-items-center justify-content-center">
-                <img src={avatarImage} className="rounded-circle" alt="Войти" />
+                <img src={avatarImage} className="rounded-circle" alt={t('login.title')} />
               </Col>
 
               <Form className="col-12 col-md-6 mt-3 mt-md-0" onSubmit={formik.handleSubmit}>
-                <h1 className="text-center mb-4">{t('login.enter')}</h1>
+                <h1 className="text-center mb-4">{t('login.title')}</h1>
                 <Form.Group className="form-floating mb-3">
                   <Form.Control
                     onChange={formik.handleChange}
@@ -91,7 +94,6 @@ const LoginPage = () => {
                       {t('login.form.feedback')}
                     </Form.Control.Feedback>
                   )}
-
                 </Form.Group>
                 <Button className="w-100 mb-3 btn" variant="outline-primary" type="submit">{t('login.form.submit')}</Button>
               </Form>
