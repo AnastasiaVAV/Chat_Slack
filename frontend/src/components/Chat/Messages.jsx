@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux'
 
 const Messages = () => {
   const { t } = useTranslation()
-  const openChannel = useSelector(state => state.channels.openChannel)
-  const messagesState = useSelector(state => state.messages)
-  const currentMessagesState = messagesState.filter(({ channelId }) => channelId === openChannel.id)
+  const openChannelId = useSelector(state => state.channels.openChannelId)
+  const openChannel = useSelector(state => state.channels.channels).find(channel => channel.id === openChannelId)
+  const currentMessagesState = useSelector(state => state.messages).filter(({ channelId }) => channelId === openChannelId)
 
   return (
     <>

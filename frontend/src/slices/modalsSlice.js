@@ -16,9 +16,6 @@ const modalSlice = createSlice({
     hideModal: () => {
       return { type: null, item: null }
     },
-    // setItemModal: (state, { payload }) => {
-    //   return { ...state, item: payload }
-    // },
   },
 })
 

@@ -1,46 +1,50 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import useAuth from '../../hooks/useAuth.js'
 
 import { Modal, Button, Form } from 'react-bootstrap'
-import _ from 'lodash'
-import axios from 'axios'
-import routes from '../../routes.js'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
+
+import { useAddChannelMutation } from '../../services/channelsApi.js'
+// import { MessageFormContext } from '../../../contexts/MessageFormContext.jsx'
+
 import validator from '../../utils/channelsValidator.js'
 
 const Add = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const { userId, authHeader } = useAuth()
+  // const { focusRef, setFocus } = useContext(MessageFormContext)
 
+  const user = useSelector(state => state.authorization)
   const channels = useSelector(state => state.channels.channels)
+  // const openChannelId = useSelector(state => state.channels.openChannelId)
   const currentUsername = useSelector(state => state.authorization.username)
 
-  useEffect(() => inputRef.current.focus(), [])
+  const [addChannel] = useAddChannelMutation()
+
+  useEffect(() => inputRef.current?.focus(), [])
+
+  const handleClose = () => {
+    dispatch(modalsActions.hideModal())
+  }
 
   const formik = useFormik({
     initialValues: { body: '' },
     validationSchema: validator(channels),
     onSubmit: async (values) => {
       const newChannel = { name: values.body }
-      const res = await axios.post(routes.channelsPath(), newChannel, { headers: authHeader })
-      console.log('newChannel:', res.data)
-      if (userId.username === currentUsername) {
-        dispatch(channelsActions.setOpenChannel(res.data))
+      const channelData = await addChannel(newChannel).unwrap()
+      console.log('newChannel:', channelData)
+      if (user.username === currentUsername) {
+        dispatch(channelsActions.setOpenChannelId(channelData.id))
       }
-      dispatch(modalsActions.hideModal())
+      handleClose()
     },
   })
-
-  const handleClose = () => {
-    dispatch(modalsActions.hideModal())
-  }
 
   return (
     <Modal show onHide={handleClose}>

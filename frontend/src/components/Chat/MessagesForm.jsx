@@ -1,31 +1,33 @@
 import { useSelector } from 'react-redux'
-import { useEffect, useRef } from 'react'
+import { useContext, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
-import useAuth from '../../hooks/useAuth'
 
-import axios from 'axios'
-import routes from '../../routes'
+import { MessageFormContext } from '../../../contexts/MessageFormContext'
+import { useAddMessageMutation } from '../../services/messagesApi'
 
 const MessagesForm = () => {
-  const inputMessage = useRef()
   const { t } = useTranslation()
-  const { userId, authHeader } = useAuth()
-  const openChannel = useSelector(state => state.channels.openChannel)
+  const { focusRef, setFocus } = useContext(MessageFormContext)
+
+  const user = useSelector(state => state.authorization)
+  const openChannelId = useSelector(state => state.channels.openChannelId)
+
+  const [addMessage, { isLoading }] = useAddMessageMutation()
 
   const formik = useFormik({
     initialValues: {
       body: '',
     },
     onSubmit: async (values, { resetForm }) => {
-      const newMessage = { body: values.body, channelId: openChannel.id, username: userId.username }
-      await axios.post(routes.messagesPath(), newMessage, { headers: authHeader })
+      const newMessage = { body: values.body, channelId: openChannelId, username: user.username }
+      addMessage(newMessage)
       resetForm()
-      inputMessage.current.focus()
+      setFocus()
     },
   })
 
-  useEffect(() => inputMessage.current.focus(), [])
+  useEffect(() => setFocus(), [setFocus])
 
   return (
     <div className="mt-auto px-5 py-3">
@@ -38,7 +40,7 @@ const MessagesForm = () => {
             aria-label="Новое сообщение"
             placeholder={t('chat.form.enterMessage')}
             className="border-0 p-0 ps-2 form-control"
-            ref={inputMessage}
+            ref={focusRef}
           />
           <button type="submit" disabled={!formik.values.body.trim()} className="btn btn-group-vertical">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor" className="bi bi-arrow-right-square">

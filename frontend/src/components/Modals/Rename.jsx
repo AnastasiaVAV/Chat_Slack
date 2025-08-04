@@ -2,20 +2,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import useAuth from '../../hooks/useAuth.js'
 
 import { Modal, Button, Form } from 'react-bootstrap'
-import axios from 'axios'
-import routes from '../../routes.js'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
+import { useRenameChannelMutation } from '../../services/channelsApi.js'
 import validator from '../../utils/channelsValidator.js'
 
 const Rename = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const { authHeader } = useAuth()
+  const [renameChannel] = useRenameChannelMutation()
 
   const channels = useSelector(state => state.channels.channels)
   const currentChannel = useSelector(state => state.modals.item)
@@ -27,8 +25,8 @@ const Rename = () => {
     validationSchema: validator(channels),
     onSubmit: async (values) => {
       const editedChannel = { name: values.body }
-      const res = await axios.patch(routes.channelPath(currentChannel.id), editedChannel, { headers: authHeader })
-      console.log('editedChannel:', res.data)
+      const id = currentChannel.id
+      await renameChannel({ id, editedChannel }).unwrap()
       dispatch(modalsActions.hideModal())
     },
   })

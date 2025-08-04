@@ -6,11 +6,8 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 
-import axios from 'axios'
-import routes from '../routes.js'
-
 import { actions as authActions } from '../slices/authSlice.js'
-
+import { useAddUserMutation } from '../services/authApi.js'
 import avatarImage from '../assets/avatar-signup.jpg'
 import validator from '../utils/signupValidator.js'
 
@@ -21,6 +18,7 @@ const SignupPage = () => {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [signupFailed, setSignupFailed] = useState(false)
+  const [addUser] = useAddUserMutation()
 
   useEffect(() => {
     inputUsername.current.focus()
@@ -36,18 +34,18 @@ const SignupPage = () => {
     onSubmit: async ({ username, password }) => {
       try {
         setLoading(true)
+        setSignupFailed(false)
         const newUser = { username, password }
-        const res = await axios.post(routes.signupPath(), newUser)
-        console.log(res.data)
-        localStorage.setItem('userId', JSON.stringify(res.data))
-        dispatch(authActions.logIn(res.data))
+        const userData = await addUser(newUser).unwrap()
+        localStorage.setItem('userId', JSON.stringify(userData))
+        dispatch(authActions.logIn(userData))
         setLoading(false)
         navigate('/')
       }
       catch (err) {
         formik.setSubmitting(false)
         console.log('ошибка 409')
-        if (err.isAxiosError && err.response.status === 409) {
+        if (err.status === 409) {
           setSignupFailed(true)
           return
         }

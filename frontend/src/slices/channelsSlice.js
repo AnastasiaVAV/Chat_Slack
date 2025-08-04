@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   channels: [], // { id: '1', name: 'general', removable: false}
-  openChannel: {},
+  openChannelId: {},
 }
 
 const channelsSlice = createSlice({
@@ -13,8 +13,9 @@ const channelsSlice = createSlice({
       console.log('channels:', payload)
       return { ...state, channels: payload }
     },
-    setOpenChannel: (state, { payload }) => { // { id', name, removable }
-      return { ...state, openChannel: payload }
+    setOpenChannelId: (state, { payload }) => { // id
+      console.log('openChannelId', payload)
+      return { ...state, openChannelId: payload }
     },
     addChannel: (state, { payload }) => { // { id, name, removable }
       state.channels.push(payload)
@@ -25,9 +26,9 @@ const channelsSlice = createSlice({
     },
     removeChannel: (state, { payload }) => { // { id: '1' }
       state.channels = state.channels.filter(channel => channel.id !== payload.id)
-      if (state.openChannel.id === payload.id) {
-        const generalChannel = state.channels.find(channel => channel.name === 'general')
-        state.openChannel = generalChannel
+      if (state.openChannelId === payload.id) {
+        const generalChannelId = state.channels.find(channel => channel.name === 'general').id
+        state.openChannelId = generalChannelId
       }
     },
   },

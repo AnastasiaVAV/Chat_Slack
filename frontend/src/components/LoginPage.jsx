@@ -6,10 +6,8 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 
-import axios from 'axios'
-import routes from '../routes.js'
-
 import { actions as authActions } from '../slices/authSlice.js'
+import { useLogInMutation } from '../services/authApi.js'
 import avatarImage from '../assets/avatar-login.jpg'
 
 const LoginPage = () => {
@@ -18,6 +16,8 @@ const LoginPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
+
+  const [logIn] = useLogInMutation()
 
   useEffect(() => {
     inputUsername.current.focus()
@@ -30,15 +30,16 @@ const LoginPage = () => {
     },
     onSubmit: async (values) => {
       try {
-        const res = await axios.post(routes.loginPath(), values)
-        localStorage.setItem('userId', JSON.stringify(res.data))
-        dispatch(authActions.logIn(res.data))
+        const userData = await logIn(values).unwrap()
+        console.log(userData)
+        localStorage.setItem('userId', JSON.stringify(userData))
+        dispatch(authActions.logIn(userData))
         setAuthFailed(false)
         navigate('/')
       }
       catch (err) {
         formik.setSubmitting(false)
-        if (err.isAxiosError && err.response.status === 401) {
+        if (err.status === 401) {
           setAuthFailed(true)
           return
         }

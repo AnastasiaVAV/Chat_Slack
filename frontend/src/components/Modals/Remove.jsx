@@ -1,17 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import useAuth from '../../hooks/useAuth.js'
 
 import { Modal, Button } from 'react-bootstrap'
-import axios from 'axios'
-import routes from '../../routes.js'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
+import { useRemoveChannelMutation } from '../../services/channelsApi.js'
 
 const Remove = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const { authHeader } = useAuth()
+  const [removeChannel] = useRemoveChannelMutation()
 
   const currentChannel = useSelector(state => state.modals.item)
 
@@ -20,8 +18,8 @@ const Remove = () => {
   }
 
   const handleRemoveChannel = async () => {
-    const res = await axios.delete(routes.channelPath(currentChannel.id), { headers: authHeader })
-    console.log('removeChannel:', res.data)
+    const id = currentChannel.id
+    await removeChannel(id).unwrap()
     dispatch(modalsActions.hideModal())
   }
 

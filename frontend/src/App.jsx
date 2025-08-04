@@ -7,7 +7,7 @@ import LoginPage from './components/LoginPage.jsx'
 import ChatPage from './components/ChatPage.jsx'
 import SignupPage from './components/SignupPage.jsx'
 
-function App() {
+const App = () => {
   return (
     <Provider store={store}>
       <BrowserRouter>
