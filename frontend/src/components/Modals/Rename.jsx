@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { Modal, Button, Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 
-import { profanityFilter } from '../../init.js'
-
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { useRenameChannelMutation } from '../../services/channelsApi.js'
 import validator from '../../utils/channelsValidator.js'
@@ -16,7 +14,7 @@ const Rename = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const [renameChannel] = useRenameChannelMutation()
+  const [renameChannel, { isLoading }] = useRenameChannelMutation()
 
   const channels = useSelector(state => state.channels.channels)
   const currentChannel = useSelector(state => state.modals.item)
@@ -35,8 +33,8 @@ const Rename = () => {
         const editedChannel = { name: values.body }
         const id = currentChannel.id
         await renameChannel({ id, editedChannel }).unwrap()
-          .then(() => handleClose())
-          .then(() => toast.success(t('chat.popUp.renameChannel')))
+        handleClose()
+        toast.success(t('chat.popUp.renameChannel'))
       }
       catch {
         handleClose()
@@ -57,7 +55,7 @@ const Rename = () => {
               required
               ref={inputRef}
               onChange={formik.handleChange}
-              value={profanityFilter(formik.values.body)}
+              value={formik.values.body}
               isInvalid={formik.touched.body && !!formik.errors.body}
               name="body"
             />
@@ -74,6 +72,7 @@ const Rename = () => {
         <Button
           variant="primary"
           type="submit"
+          disabled={isLoading}
           onClick={formik.handleSubmit}
         >
           {t('modal.buttons.submit')}

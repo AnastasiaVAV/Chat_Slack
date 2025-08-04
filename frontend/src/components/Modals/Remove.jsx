@@ -10,7 +10,7 @@ import { useRemoveChannelMutation } from '../../services/channelsApi.js'
 const Remove = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const [removeChannel] = useRemoveChannelMutation()
+  const [removeChannel, { isLoading }] = useRemoveChannelMutation()
 
   const currentChannel = useSelector(state => state.modals.item)
 
@@ -22,8 +22,8 @@ const Remove = () => {
     try {
       const id = currentChannel.id
       await removeChannel(id).unwrap()
-        .then(() => handleClose())
-        .then(() => toast.success(t('chat.popUp.removeChannel')))
+      handleClose()
+      toast.success(t('chat.popUp.removeChannel'))
     }
     catch {
       handleClose()
@@ -45,6 +45,7 @@ const Remove = () => {
           <Button
             variant="danger"
             type="submit"
+            disabled={isLoading}
             onClick={handleRemoveChannel}
           >
             {t('modal.buttons.delete')}

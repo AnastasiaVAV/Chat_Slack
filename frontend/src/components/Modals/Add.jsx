@@ -10,22 +10,18 @@ import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
 
 import { useAddChannelMutation } from '../../services/channelsApi.js'
-// import { MessageFormContext } from '../../../contexts/MessageFormContext.jsx'
-
+import { MessageFormContext } from '../../../contexts/MessageFormContext.jsx'
 import validator from '../../utils/channelsValidator.js'
 
 const Add = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  // const { focusRef, setFocus } = useContext(MessageFormContext)
+  const { setFocus } = useContext(MessageFormContext)
 
-  const user = useSelector(state => state.authorization)
   const channels = useSelector(state => state.channels.channels)
-  // const openChannelId = useSelector(state => state.channels.openChannelId)
-  const currentUsername = useSelector(state => state.authorization.username)
 
-  const [addChannel] = useAddChannelMutation()
+  const [addChannel, { isLoading }] = useAddChannelMutation()
 
   useEffect(() => inputRef.current?.focus(), [])
 
@@ -39,20 +35,16 @@ const Add = () => {
     onSubmit: async (values) => {
       try {
         const newChannel = { name: values.body }
-        await addChannel(newChannel).unwrap()
-          .then((channelData) => {
-            if (user.username === currentUsername) {
-              dispatch(channelsActions.setOpenChannelId(channelData.id))
-            }
-            handleClose()
-            return channelData
-          })
-          .then(() => {
-            toast.success(t('chat.popUp.addChannel'))
-          })
-      }
-      catch {
+        const channelData = await addChannel(newChannel).unwrap()
+
+        dispatch(channelsActions.setOpenChannelId(channelData.id))
         handleClose()
+        setFocus()
+        toast.success(t('chat.popUp.addChannel'))
+      }
+      catch (error) {
+        handleClose()
+        console.log(error)
         toast.error(t('chat.popUp.error'))
       }
     },
@@ -87,6 +79,7 @@ const Add = () => {
         <Button
           variant="primary"
           type="submit"
+          disabled={isLoading}
           onClick={formik.handleSubmit}
         >
           {t('modal.buttons.submit')}
