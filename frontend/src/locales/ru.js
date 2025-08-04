@@ -44,6 +44,12 @@ export default {
         enterMessage: 'Введите сообщение...',
         submit: 'Отправить',
       },
+      popUp: {
+        addChannel: 'Канал создан',
+        renameChannel: 'Канал переименован',
+        removeChannel: 'Канал удален',
+        error: 'Ошибка загрузки данных',
+      },
     },
     modal: {
       addChannel: {

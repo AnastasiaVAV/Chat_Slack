@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 
+import { profanityFilter } from '../../init'
+
 const Messages = () => {
   const { t } = useTranslation()
   const openChannelId = useSelector(state => state.channels.openChannelId)
@@ -16,7 +18,7 @@ const Messages = () => {
               <b>
                 #
                 {' '}
-                {openChannel.name}
+                {profanityFilter(openChannel.name)}
               </b>
             </p>
             <span className="text-muted">
@@ -30,7 +32,7 @@ const Messages = () => {
           <div key={message.id} className="text-break mb-2">
             <b>{message.username}</b>
             {': '}
-            {message.body}
+            {profanityFilter(message.body)}
           </div>
         ))}
       </div>

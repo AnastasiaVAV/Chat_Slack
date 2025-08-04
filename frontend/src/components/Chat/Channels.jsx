@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { Dropdown } from 'react-bootstrap'
 
 import cn from 'classnames'
+import { profanityFilter } from '../../init.js'
 
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
@@ -37,7 +38,7 @@ const Channels = () => {
               onClick={() => handleChangeOpenChannel(channel.id)}
             >
               <span className="me-1">#</span>
-              {channel.name}
+              {profanityFilter(channel.name)}
             </button>
             {channel.removable && (
               <>

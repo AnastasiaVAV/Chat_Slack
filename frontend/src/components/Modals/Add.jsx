@@ -4,6 +4,7 @@ import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import { Modal, Button, Form } from 'react-bootstrap'
+import { toast } from 'react-toastify'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
@@ -36,13 +37,24 @@ const Add = () => {
     initialValues: { body: '' },
     validationSchema: validator(channels),
     onSubmit: async (values) => {
-      const newChannel = { name: values.body }
-      const channelData = await addChannel(newChannel).unwrap()
-      console.log('newChannel:', channelData)
-      if (user.username === currentUsername) {
-        dispatch(channelsActions.setOpenChannelId(channelData.id))
+      try {
+        const newChannel = { name: values.body }
+        await addChannel(newChannel).unwrap()
+          .then((channelData) => {
+            if (user.username === currentUsername) {
+              dispatch(channelsActions.setOpenChannelId(channelData.id))
+            }
+            handleClose()
+            return channelData
+          })
+          .then(() => {
+            toast.success(t('chat.popUp.addChannel'))
+          })
       }
-      handleClose()
+      catch {
+        handleClose()
+        toast.error(t('chat.popUp.error'))
+      }
     },
   })
 

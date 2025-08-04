@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import { Modal, Button } from 'react-bootstrap'
+import { toast } from 'react-toastify'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { useRemoveChannelMutation } from '../../services/channelsApi.js'
@@ -18,9 +19,16 @@ const Remove = () => {
   }
 
   const handleRemoveChannel = async () => {
-    const id = currentChannel.id
-    await removeChannel(id).unwrap()
-    dispatch(modalsActions.hideModal())
+    try {
+      const id = currentChannel.id
+      await removeChannel(id).unwrap()
+        .then(() => handleClose())
+        .then(() => toast.success(t('chat.popUp.removeChannel')))
+    }
+    catch {
+      handleClose()
+      toast.error(t('chat.popUp.error'))
+    }
   }
 
   return (
