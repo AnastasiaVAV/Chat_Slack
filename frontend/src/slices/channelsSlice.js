@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   channels: [], // { id: '1', name: 'general', removable: false}
-  openChannelId: {},
+  openChannelId: null,
 }
 
 const channelsSlice = createSlice({

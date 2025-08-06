@@ -2,6 +2,9 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { Container, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
+// import { channelsApi } from '../services/channelsApi.js'
+// import { messagesApi } from '../services/messagesApi.js'
+
 import { actions as authActions } from '../slices/authSlice.js'
 
 const MainPage = () => {
@@ -11,6 +14,8 @@ const MainPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('userId')
+    // dispatch(channelsApi.util.resetApiState())
+    // dispatch(messagesApi.util.resetApiState())
     dispatch(authActions.logOut())
     navigate('login')
   }

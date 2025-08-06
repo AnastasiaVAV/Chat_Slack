@@ -25,9 +25,10 @@ const Remove = () => {
       handleClose()
       toast.success(t('chat.popUp.removeChannel'))
     }
-    catch {
+    catch (err) {
       handleClose()
       toast.error(t('chat.popUp.fetchError'))
+      throw err
     }
   }
 

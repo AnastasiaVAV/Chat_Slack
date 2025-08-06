@@ -8,6 +8,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
 
+      - name: install dependencies
+        run: npm ci
+
       - name: run lint
         run: npx eslint .
         working-directory: ./frontend

@@ -43,9 +43,10 @@ const Rename = () => {
         toast.success(t('chat.popUp.renameChannel'))
         setTimeout(() => setFocus(), 100)
       }
-      catch {
+      catch (err) {
         handleClose()
         toast.error(t('chat.popUp.fetchError'))
+        throw err
       }
     },
   })

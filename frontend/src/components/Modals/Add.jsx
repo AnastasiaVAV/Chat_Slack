@@ -40,10 +40,10 @@ const Add = () => {
         toast.success(t('chat.popUp.addChannel'))
         setTimeout(() => setFocus(), 100)
       }
-      catch (error) {
+      catch (err) {
         handleClose()
-        console.log(error)
         toast.error(t('chat.popUp.fetchError'))
+        throw err
       }
     },
   })

@@ -30,26 +30,31 @@ const ChatPage = () => {
   const navigate = useNavigate()
 
   const user = useSelector(state => state.authorization)
+  const openChannelId = useSelector(state => state.channels.openChannelId)
 
-  const { data: channelsData, isLoading: isChannelsLoading } = useGetChannelsQuery()
-  const { data: messagesData, isLoading: isMessagesLoading } = useGetMessagesQuery()
+  const { data: channelsData, isLoading: isChannelsLoading, refetch: refetchChannels } = useGetChannelsQuery()
+  const { data: messagesData, isLoading: isMessagesLoading, refetch: refetchMessages } = useGetMessagesQuery()
 
   useEffect(() => {
     if (!user?.token) {
       navigate('/login')
       return
     }
+    refetchChannels()
+    refetchMessages()
 
     if (channelsData && channelsData.length > 0) {
       dispatch(channelsActions.setChannels(channelsData))
-      const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-      dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+      if (!openChannelId) {
+        const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
+        dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+      }
     }
 
     if (messagesData && messagesData.length > 0) {
       dispatch(messagesActions.setMessages(messagesData))
     }
-  }, [user, navigate, dispatch, channelsData, messagesData])
+  }, [user, navigate, dispatch, channelsData, messagesData, refetchChannels, refetchMessages, openChannelId])
 
   return (
     <>

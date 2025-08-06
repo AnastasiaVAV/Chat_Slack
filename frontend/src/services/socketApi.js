@@ -9,7 +9,6 @@ export const socketApi = createApi({
     initSockets: builder.mutation({
       queryFn: ({ dispatch, socket }) => {
         socket.on('newMessage', payload => dispatch(messagesActions.addMessage(payload)))
-
         socket.on('newChannel', payload => dispatch(channelsActions.addChannel(payload)))
         socket.on('renameChannel', payload => dispatch(channelsActions.renameChannel(payload)))
         socket.on('removeChannel', payload => dispatch(channelsActions.removeChannel(payload)))
