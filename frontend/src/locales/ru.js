@@ -8,8 +8,10 @@ export default {
         submit: 'Войти',
         feedback: 'Неверные имя пользователя или пароль',
       },
-      noAccountQuestion: 'Нет аккаунта?',
-      registration: 'Регистрация',
+      registration: 'Нет аккаунта? <0>Регистрация</0>',
+      popUp: {
+        fetchError: 'Ошибка соединения',
+      },
     },
     signup: {
       title: 'Регистрация',
@@ -26,10 +28,13 @@ export default {
           required: 'Обязательное поле',
         },
       },
+      popUp: {
+        fetchError: 'Ошибка соединения',
+      },
     },
     chat: {
       channels: 'Каналы',
-      loadingChannel: 'Загрузка канала...',
+      addChannelBtn: '+',
       channelMenu: {
         dropdownEl: 'Управление каналом',
         removeBtn: 'Удалить',
@@ -48,7 +53,7 @@ export default {
         addChannel: 'Канал создан',
         renameChannel: 'Канал переименован',
         removeChannel: 'Канал удален',
-        error: 'Ошибка загрузки данных',
+        fetchError: 'Ошибка соединения',
       },
     },
     modal: {

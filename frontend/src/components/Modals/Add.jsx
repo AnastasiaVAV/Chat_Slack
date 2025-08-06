@@ -9,19 +9,18 @@ import { toast } from 'react-toastify'
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
 
+import MessageFormFocusContext from '../../contexts/MessageFormFocusContext.jsx'
 import { useAddChannelMutation } from '../../services/channelsApi.js'
-import { MessageFormContext } from '../../../contexts/MessageFormContext.jsx'
 import validator from '../../utils/channelsValidator.js'
 
 const Add = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const { setFocus } = useContext(MessageFormContext)
+  const { setFocus } = useContext(MessageFormFocusContext)
+  const [addChannel, { isLoading }] = useAddChannelMutation()
 
   const channels = useSelector(state => state.channels.channels)
-
-  const [addChannel, { isLoading }] = useAddChannelMutation()
 
   useEffect(() => inputRef.current?.focus(), [])
 
@@ -36,16 +35,15 @@ const Add = () => {
       try {
         const newChannel = { name: values.body }
         const channelData = await addChannel(newChannel).unwrap()
-
         dispatch(channelsActions.setOpenChannelId(channelData.id))
         handleClose()
-        setFocus()
         toast.success(t('chat.popUp.addChannel'))
+        setTimeout(() => setFocus(), 100)
       }
       catch (error) {
         handleClose()
         console.log(error)
-        toast.error(t('chat.popUp.error'))
+        toast.error(t('chat.popUp.fetchError'))
       }
     },
   })

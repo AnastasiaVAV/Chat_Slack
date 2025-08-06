@@ -2,9 +2,10 @@ import { useFormik } from 'formik'
 import { useRef, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 
 import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
+import { toast } from 'react-toastify'
 
 import { actions as authActions } from '../slices/authSlice.js'
 import { useLogInMutation } from '../services/authApi.js'
@@ -12,12 +13,11 @@ import avatarImage from '../assets/avatar-login.jpg'
 
 const LoginPage = () => {
   const inputUsername = useRef()
-  const [authFailed, setAuthFailed] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
-
-  const [logIn] = useLogInMutation()
+  const [logIn, { isLoading }] = useLogInMutation()
+  const [authFailed, setAuthFailed] = useState(false)
 
   useEffect(() => {
     inputUsername.current.focus()
@@ -30,19 +30,19 @@ const LoginPage = () => {
     },
     onSubmit: async (values) => {
       try {
+        setAuthFailed(false)
         const userData = await logIn(values).unwrap()
-        console.log(userData)
         localStorage.setItem('userId', JSON.stringify(userData))
         dispatch(authActions.logIn(userData))
-        setAuthFailed(false)
         navigate('/')
       }
       catch (err) {
-        formik.setSubmitting(false)
         if (err.status === 401) {
           setAuthFailed(true)
+          inputUsername.current.focus()
           return
         }
+        toast.error(t('login.popUp.fetchError'))
         throw err
       }
     },
@@ -73,7 +73,9 @@ const LoginPage = () => {
                     ref={inputUsername}
                     isInvalid={authFailed}
                   />
-                  <Form.Label className="form-label" htmlFor="username">{t('login.form.username')}</Form.Label>
+                  <Form.Label className="form-label" htmlFor="username">
+                    {t('login.form.username')}
+                  </Form.Label>
                 </Form.Group>
 
                 <Form.Group className="form-floating mb-4">
@@ -85,25 +87,35 @@ const LoginPage = () => {
                     type="password"
                     name="password"
                     id="password"
-                    autoComplete="current-password"
+                    autoComplete="password"
                     isInvalid={authFailed}
                     required
                   />
-                  <Form.Label className="form-label" htmlFor="password">{t('login.form.password')}</Form.Label>
+                  <Form.Label className="form-label" htmlFor="password">
+                    {t('login.form.password')}
+                  </Form.Label>
                   {authFailed && (
                     <Form.Control.Feedback type="invalid" tooltip>
                       {t('login.form.feedback')}
                     </Form.Control.Feedback>
                   )}
                 </Form.Group>
-                <Button className="w-100 mb-3 btn" variant="outline-primary" type="submit">{t('login.form.submit')}</Button>
+
+                <Button
+                  className="w-100 mb-3 btn"
+                  variant="outline-primary"
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {t('login.form.submit')}
+                </Button>
               </Form>
             </Row>
             <div className="card-footer p-4">
               <div className="text-center">
-                <span>{t('login.noAccountQuestion')}</span>
-                {' '}
-                <a href="/signup">{t('login.registration')}</a>
+                <Trans i18nKey="login.registration">
+                  <a href="/signup"></a>
+                </Trans>
               </div>
             </div>
           </Card>

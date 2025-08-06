@@ -1,10 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useContext } from 'react'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import { Modal, Button, Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+// import { profanityFilter } from '../../init.js'
+
+import ContentFilterContext from '../../contexts/ContentFilterContext.jsx'
+import MessageFormFocusContext from '../../contexts/MessageFormFocusContext.jsx'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { useRenameChannelMutation } from '../../services/channelsApi.js'
@@ -14,6 +18,8 @@ const Rename = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
+  const profanityFilter = useContext(ContentFilterContext)
+  const { setFocus } = useContext(MessageFormFocusContext)
   const [renameChannel, { isLoading }] = useRenameChannelMutation()
 
   const channels = useSelector(state => state.channels.channels)
@@ -26,7 +32,7 @@ const Rename = () => {
   }
 
   const formik = useFormik({
-    initialValues: { body: currentChannel.name },
+    initialValues: { body: profanityFilter(currentChannel.name) },
     validationSchema: validator(channels),
     onSubmit: async (values) => {
       try {
@@ -35,10 +41,11 @@ const Rename = () => {
         await renameChannel({ id, editedChannel }).unwrap()
         handleClose()
         toast.success(t('chat.popUp.renameChannel'))
+        setTimeout(() => setFocus(), 100)
       }
       catch {
         handleClose()
-        toast.error(t('chat.popUp.error'))
+        toast.error(t('chat.popUp.fetchError'))
       }
     },
   })

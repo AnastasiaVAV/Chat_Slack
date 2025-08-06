@@ -27,7 +27,7 @@ const Remove = () => {
     }
     catch {
       handleClose()
-      toast.error(t('chat.popUp.error'))
+      toast.error(t('chat.popUp.fetchError'))
     }
   }
 

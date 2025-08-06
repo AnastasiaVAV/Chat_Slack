@@ -2,20 +2,20 @@ import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import resources from './locales/index.js'
 
-import * as leoProfanity from 'leo-profanity'
+// import * as leoProfanity from 'leo-profanity'
 
 import { io } from 'socket.io-client'
 import { socketApi } from './services/socketApi.js'
 
-const initProfanityFilter = () => {
-  leoProfanity.loadDictionary('ru')
-  const enWords = leoProfanity.getDictionary('en')
-  leoProfanity.add(enWords)
+// const initProfanityFilter = () => {
+//   leoProfanity.loadDictionary('ru')
+//   const enWords = leoProfanity.getDictionary('en')
+//   console.log('leo')
+//   leoProfanity.add(enWords)
+//   return text => leoProfanity.clean(text)
+// }
 
-  return text => leoProfanity.clean(text)
-}
-
-export const profanityFilter = initProfanityFilter()
+// export const profanityFilter = initProfanityFilter()
 
 export default (store) => {
   const defaultLanguage = 'ru'
