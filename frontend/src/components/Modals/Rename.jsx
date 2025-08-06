@@ -32,7 +32,7 @@ const Rename = () => {
   }
 
   const formik = useFormik({
-    initialValues: { body: profanityFilter(currentChannel.name) },
+    initialValues: { name: profanityFilter(currentChannel.name) },
     validationSchema: validator(channels),
     onSubmit: async (values) => {
       try {
@@ -65,11 +65,12 @@ const Rename = () => {
               onChange={formik.handleChange}
               value={formik.values.body}
               isInvalid={formik.touched.body && !!formik.errors.body}
-              name="name"
+              name="body"
+              id="body"
             />
             <Form.Label
               className="visually-hidden"
-              htmlFor="name"
+              htmlFor="body"
             >
               {t('modal.renameChannel.label')}
             </Form.Label>

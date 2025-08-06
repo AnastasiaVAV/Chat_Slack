@@ -19,7 +19,9 @@ const App = () => {
       <Provider store={store}>
         <ContentFilterProvider>
           <BrowserRouter>
-            <ToastContainer />
+            <div className="Toastify">
+              <ToastContainer />
+            </div>
             <Routes>
               <Route path="/" element={<MainPage />}>
                 <Route index element={<ChatPage />} />

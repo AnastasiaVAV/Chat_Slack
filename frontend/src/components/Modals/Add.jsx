@@ -37,7 +37,11 @@ const Add = () => {
         const channelData = await addChannel(newChannel).unwrap()
         dispatch(channelsActions.setOpenChannelId(channelData.id))
         handleClose()
-        toast.success(t('chat.popUp.addChannel'))
+        toast.success(
+          <div role="alert" className="Toastify__toast-body">
+            {t('chat.popUp.addChannel')}
+          </div>,
+        )
         setTimeout(() => setFocus(), 100)
       }
       catch (err) {
@@ -62,12 +66,12 @@ const Add = () => {
               onChange={formik.handleChange}
               value={formik.values.body}
               isInvalid={formik.touched.body && !!formik.errors.body}
-              name="name"
-              id="name"
+              name="body"
+              id="body"
             />
             <Form.Label
               className="visually-hidden"
-              htmlFor="name"
+              htmlFor="body"
             >
               {t('modal.addChannel.label')}
             </Form.Label>
