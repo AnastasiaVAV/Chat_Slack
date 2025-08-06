@@ -62,8 +62,15 @@ const Add = () => {
               onChange={formik.handleChange}
               value={formik.values.body}
               isInvalid={formik.touched.body && !!formik.errors.body}
-              name="body"
+              name="name"
+              id="name"
             />
+            <Form.Label
+              className="visually-hidden"
+              htmlFor="name"
+            >
+              {t('modal.addChannel.label')}
+            </Form.Label>
             <Form.Control.Feedback type="invalid">
               {t(formik.errors.body)}
             </Form.Control.Feedback>

@@ -59,9 +59,11 @@ export default {
     modal: {
       addChannel: {
         title: 'Добавить канал',
+        label: 'Имя канала',
       },
       renameChannel: {
         title: 'Переименовать канал',
+        label: 'Имя канала',
       },
       removeChannel: {
         title: 'Удалить канал',
