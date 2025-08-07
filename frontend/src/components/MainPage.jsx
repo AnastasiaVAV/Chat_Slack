@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 // import { messagesApi } from '../services/messagesApi.js'
 
 import { actions as authActions } from '../slices/authSlice.js'
+import { useEffect } from 'react'
 
 const MainPage = () => {
   const dispatch = useDispatch()
@@ -14,11 +15,16 @@ const MainPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('userId')
-    // dispatch(channelsApi.util.resetApiState())
-    // dispatch(messagesApi.util.resetApiState())
     dispatch(authActions.logOut())
-    navigate('login')
+    navigate('/login')
   }
+
+  useEffect(() => {
+    if (!user?.token) {
+      navigate('/login')
+      return
+    }
+  }, [user, navigate])
 
   return (
     <div className="vh-100">

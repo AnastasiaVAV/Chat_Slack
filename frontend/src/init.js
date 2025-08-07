@@ -1,45 +1,36 @@
+// import { StrictMode } from 'react'
+// import { createRoot } from 'react-dom/client'
+// import { Provider } from 'react-redux'
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import resources from './locales/index.js'
+// import App from './App.jsx'
+import { actions as channelsActions } from './slices/channelsSlice.js'
+import { actions as messagesActions } from './slices/messagesSlice.js'
 
-// import * as leoProfanity from 'leo-profanity'
-
-import { io } from 'socket.io-client'
-import { socketApi } from './services/socketApi.js'
-
-// const initProfanityFilter = () => {
-//   leoProfanity.loadDictionary('ru')
-//   const enWords = leoProfanity.getDictionary('en')
-//   console.log('leo')
-//   leoProfanity.add(enWords)
-//   return text => leoProfanity.clean(text)
-// }
-
-// export const profanityFilter = initProfanityFilter()
-
-export default (store) => {
-  const defaultLanguage = 'ru'
+export default (store, socket) => {
   const i18nInstance = i18next.createInstance()
-  i18nInstance
-    .use(initReactI18next)
-    .init({
-      resources,
-      lng: defaultLanguage,
-      fallbackLng: defaultLanguage,
-      interpolation: {
-        escapeValue: false,
-      },
-    })
-
-  const socket = io('', { // Пустая строка - подключаемся к текущему домену
-    path: '/socket.io', // Должен совпадать с путем в vite.config.js
+  i18nInstance.use(initReactI18next).init({
+    resources,
+    lng: 'ru',
+    fallbackLng: 'ru',
+    interpolation: { escapeValue: false },
   })
 
-  const initializeSocketListeners = (store, socket) => {
-    store.dispatch(
-      socketApi.endpoints.initSockets.initiate({ dispatch: store.dispatch, socket }),
-    )
-  }
+  socket.on('newMessage', payload => store.dispatch(messagesActions.addMessage(payload)))
+  socket.on('newChannel', payload => store.dispatch(channelsActions.addChannel(payload)))
+  socket.on('renameChannel', payload => store.dispatch(channelsActions.renameChannel(payload)))
+  socket.on('removeChannel', payload => store.dispatch(channelsActions.removeChannel(payload)))
 
-  initializeSocketListeners(store, socket)
+  // // 3. Рендеринг приложения
+  // const root = createRoot(rootElement)
+  // root.render(
+  //   <StrictMode>
+  //     <Provider store={store}>
+  //       <App />
+  //     </Provider>
+  //   </StrictMode>,
+  // )
+
+  // return { i18n: i18nInstance }
 }

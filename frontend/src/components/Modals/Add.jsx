@@ -31,18 +31,18 @@ const Add = () => {
   const formik = useFormik({
     initialValues: { body: '' },
     validationSchema: validator(channels),
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       try {
         const newChannel = { name: values.body }
-        const channelData = await addChannel(newChannel).unwrap()
-        dispatch(channelsActions.setOpenChannelId(channelData.id))
+        const channelData = addChannel(newChannel)
         handleClose()
+        dispatch(channelsActions.setOpenChannelId(channelData.id))
         toast.success(
           <div role="alert" className="Toastify__toast-body">
             {t('chat.popUp.addChannel')}
           </div>,
         )
-        setTimeout(() => setFocus(), 100)
+        console.log('успешно добавлено')
       }
       catch (err) {
         handleClose()

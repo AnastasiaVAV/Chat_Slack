@@ -4,9 +4,11 @@ import { baseQueryWithAuth } from './baseQuery'
 export const channelsApi = createApi({
   reducerPath: 'channelsRequests',
   baseQuery: baseQueryWithAuth,
+  tagTypes: ['Channels'],
   endpoints: builder => ({
     getChannels: builder.query({
       query: () => 'channels',
+      // providesTags: ['Channels'],
     }),
     addChannel: builder.mutation({
       query: newChannel => ({
@@ -14,6 +16,7 @@ export const channelsApi = createApi({
         body: newChannel,
         method: 'POST',
       }),
+      // invalidatesTags: ['Channels'],
     }),
     renameChannel: builder.mutation({
       query: ({ id, editedChannel }) => ({
@@ -21,12 +24,14 @@ export const channelsApi = createApi({
         body: editedChannel,
         method: 'PATCH',
       }),
+      // invalidatesTags: ['Channels'],
     }),
     removeChannel: builder.mutation({
       query: id => ({
         url: `channels/${id}`,
         method: 'DELETE',
       }),
+      // invalidatesTags: ['Channels'],
     }),
   }),
 })

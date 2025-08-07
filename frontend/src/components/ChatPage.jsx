@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 
-import { Container, Row, Col, Spinner } from 'react-bootstrap'
+import { Container, Row, Spinner } from 'react-bootstrap'
 
 import { actions as channelsActions } from '../slices/channelsSlice.js'
 import { actions as messagesActions } from '../slices/messagesSlice.js'
@@ -16,6 +16,8 @@ import Messages from './Chat/Messages.jsx'
 import MessagesForm from './Chat/MessagesForm.jsx'
 import getModal from './Modals/index.js'
 
+import _ from 'lodash'
+
 const Modal = () => {
   const { type } = useSelector(state => state.modals)
   if (!type) {
@@ -27,34 +29,42 @@ const Modal = () => {
 
 const ChatPage = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
-  const user = useSelector(state => state.authorization)
   const openChannelId = useSelector(state => state.channels.openChannelId)
 
-  const { data: channelsData, isLoading: isChannelsLoading, refetch: refetchChannels } = useGetChannelsQuery()
-  const { data: messagesData, isLoading: isMessagesLoading, refetch: refetchMessages } = useGetMessagesQuery()
+  const { data: channelsData, isLoading: isChannelsLoading } = useGetChannelsQuery()
+  const { data: messagesData, isLoading: isMessagesLoading } = useGetMessagesQuery()
+
+  console.log('isChannelsLoading', isChannelsLoading)
+  console.log('channelsData ', channelsData)
+
+  // useEffect(() => {
+  //   if (!channelsData && !messagesData) {
+  //     return
+  //   }
+  //   if (channelsData && channelsData.length > 0) {
+  //     dispatch(channelsActions.setChannels(channelsData))
+  //     const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
+  //     dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+  //   }
+
+  //   if (messagesData && messagesData.length > 0) {
+  //     dispatch(messagesActions.setMessages(messagesData))
+  //   }
+  // })
 
   useEffect(() => {
-    if (!user?.token) {
-      navigate('/login')
-      return
-    }
-    refetchChannels()
-    refetchMessages()
-
+    console.log('запуск useEffect')
     if (channelsData && channelsData.length > 0) {
       dispatch(channelsActions.setChannels(channelsData))
-      if (!openChannelId) {
-        const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-        dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
-      }
+      const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
+      dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
     }
 
     if (messagesData && messagesData.length > 0) {
       dispatch(messagesActions.setMessages(messagesData))
     }
-  }, [user, navigate, dispatch, channelsData, messagesData, refetchChannels, refetchMessages, openChannelId])
+  }, [dispatch, channelsData, messagesData, openChannelId])
 
   return (
     <>
