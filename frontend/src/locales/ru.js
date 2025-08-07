@@ -52,7 +52,7 @@ export default {
       popUp: {
         addChannel: 'Канал создан',
         renameChannel: 'Канал переименован',
-        removeChannel: 'Канал удален',
+        removeChannel: 'Канал удалён',
         fetchError: 'Ошибка соединения',
       },
     },
