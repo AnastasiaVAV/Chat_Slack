@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useContext, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 
@@ -9,18 +9,17 @@ import { toast } from 'react-toastify'
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
 
-import MessageFormFocusContext from '../../contexts/MessageFormFocusContext.jsx'
-import { useAddChannelMutation } from '../../services/channelsApi.js'
 import validator from '../../utils/channelsValidator.js'
+import apiRequests from '../../services/api.js'
 
 const Add = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const { setFocus } = useContext(MessageFormFocusContext)
-  const [addChannel, { isLoading }] = useAddChannelMutation()
+  const [isLoading, setLoading] = useState(false)
 
   const channels = useSelector(state => state.channels.channels)
+  const userToken = useSelector(state => state.authorization?.token)
 
   useEffect(() => inputRef.current?.focus(), [])
 
@@ -31,10 +30,11 @@ const Add = () => {
   const formik = useFormik({
     initialValues: { body: '' },
     validationSchema: validator(channels),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       try {
+        setLoading(true)
         const newChannel = { name: values.body }
-        const channelData = addChannel(newChannel)
+        const channelData = await apiRequests.addChannel(userToken, newChannel)
         handleClose()
         dispatch(channelsActions.setOpenChannelId(channelData.id))
         toast.success(
@@ -42,11 +42,15 @@ const Add = () => {
             {t('chat.popUp.addChannel')}
           </div>,
         )
-        console.log('успешно добавлено')
       }
       catch (err) {
+        setLoading(false)
         handleClose()
-        toast.error(t('chat.popUp.fetchError'))
+        toast.error(
+          <div role="alert" className="Toastify__toast-body">
+            {t('chat.popUp.fetchError')}
+          </div>,
+        )
         throw err
       }
     },

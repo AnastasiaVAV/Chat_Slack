@@ -1,33 +1,49 @@
 import { useSelector } from 'react-redux'
-import { useContext, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
+import { toast } from 'react-toastify'
 
-import MessageFormFocusContext from '../../contexts/MessageFormFocusContext.jsx'
-import { useAddMessageMutation } from '../../services/messagesApi'
+import apiRequests from '../../services/api.js'
 
 const MessagesForm = () => {
   const { t } = useTranslation()
-  const { focusRef, setFocus } = useContext(MessageFormFocusContext)
+  const inputRef = useRef()
+
+  const [isLoading, setLoading] = useState(false)
 
   const user = useSelector(state => state.authorization)
   const openChannelId = useSelector(state => state.channels.openChannelId)
 
-  const [addMessage, { isLoading }] = useAddMessageMutation()
+  useEffect(() => {
+    inputRef.current.focus()
+  }, [openChannelId])
 
   const formik = useFormik({
     initialValues: {
       body: '',
     },
     onSubmit: async (values, { resetForm }) => {
-      const newMessage = { body: values.body, channelId: openChannelId, username: user.username }
-      addMessage(newMessage)
-      resetForm()
-      setFocus()
+      try {
+        setLoading(true)
+        const newMessage = { body: values.body, channelId: openChannelId, username: user.username }
+        await apiRequests.addMessage(user.token, newMessage)
+        resetForm()
+        inputRef.current.focus()
+        setLoading(false)
+      }
+      catch (err) {
+        resetForm()
+        inputRef.current.focus()
+        toast.success(
+          <div role="alert" className="Toastify__toast-body">
+            {t('chat.popUp.addChannel')}
+          </div>,
+        )
+        throw err
+      }
     },
   })
-
-  useEffect(() => setFocus(), [setFocus])
 
   return (
     <div className="mt-auto px-5 py-3">
@@ -40,7 +56,7 @@ const MessagesForm = () => {
             aria-label="Новое сообщение"
             placeholder={t('chat.form.enterMessage')}
             className="border-0 p-0 ps-2 form-control"
-            ref={focusRef}
+            ref={inputRef}
           />
           <button
             className="btn btn-group-vertical"

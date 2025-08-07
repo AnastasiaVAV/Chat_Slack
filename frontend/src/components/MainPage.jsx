@@ -1,30 +1,17 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 import { Container, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
-// import { channelsApi } from '../services/channelsApi.js'
-// import { messagesApi } from '../services/messagesApi.js'
-
 import { actions as authActions } from '../slices/authSlice.js'
-import { useEffect } from 'react'
 
 const MainPage = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const user = useSelector(state => state.authorization)
 
   const handleLogout = () => {
     localStorage.removeItem('userId')
     dispatch(authActions.logOut())
-    navigate('/login')
   }
-
-  useEffect(() => {
-    if (!user?.token) {
-      navigate('/login')
-      return
-    }
-  }, [user, navigate])
 
   return (
     <div className="vh-100">

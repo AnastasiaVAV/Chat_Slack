@@ -1,22 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Container, Row, Spinner } from 'react-bootstrap'
+import { toast } from 'react-toastify'
 
 import { actions as channelsActions } from '../slices/channelsSlice.js'
 import { actions as messagesActions } from '../slices/messagesSlice.js'
 
-import { useGetChannelsQuery } from '../services/channelsApi.js'
-import { useGetMessagesQuery } from '../services/messagesApi.js'
-
-import MessageFormFocusProvider from '../contexts/MessageFormFocusProvider.jsx'
 import Channels from './Chat/Channels'
 import Messages from './Chat/Messages.jsx'
 import MessagesForm from './Chat/MessagesForm.jsx'
 import getModal from './Modals/index.js'
 
-import _ from 'lodash'
+import apiRequests from '../services/api.js'
 
 const Modal = () => {
   const { type } = useSelector(state => state.modals)
@@ -29,53 +27,52 @@ const Modal = () => {
 
 const ChatPage = () => {
   const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const navigate = useNavigate()
 
-  const openChannelId = useSelector(state => state.channels.openChannelId)
-
-  const { data: channelsData, isLoading: isChannelsLoading } = useGetChannelsQuery()
-  const { data: messagesData, isLoading: isMessagesLoading } = useGetMessagesQuery()
-
-  console.log('isChannelsLoading', isChannelsLoading)
-  console.log('channelsData ', channelsData)
-
-  // useEffect(() => {
-  //   if (!channelsData && !messagesData) {
-  //     return
-  //   }
-  //   if (channelsData && channelsData.length > 0) {
-  //     dispatch(channelsActions.setChannels(channelsData))
-  //     const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-  //     dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
-  //   }
-
-  //   if (messagesData && messagesData.length > 0) {
-  //     dispatch(messagesActions.setMessages(messagesData))
-  //   }
-  // })
+  const userToken = useSelector(state => state.authorization?.token)
+  const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log('запуск useEffect')
-    if (channelsData && channelsData.length > 0) {
-      dispatch(channelsActions.setChannels(channelsData))
-      const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-      dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+    const fetchData = async () => {
+      try {
+        const channelsData = await apiRequests.getChannels(userToken)
+        const messagesData = await apiRequests.getMessages(userToken)
+
+        if (channelsData?.length > 0) {
+          dispatch(channelsActions.setChannels(channelsData))
+          const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
+          dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+        }
+
+        if (messagesData?.length > 0) {
+          dispatch(messagesActions.setMessages(messagesData))
+        }
+        setLoading(false)
+      }
+      catch (error) {
+        console.error('Ошибка загрузки данных:', error)
+        toast.error(
+          <div role="alert" className="Toastify__toast-body">
+            {t('chat.popUp.fetchError')}
+          </div>,
+        )
+      }
     }
 
-    if (messagesData && messagesData.length > 0) {
-      dispatch(messagesActions.setMessages(messagesData))
-    }
-  }, [dispatch, channelsData, messagesData, openChannelId])
+    fetchData()
+  }, [userToken, navigate, dispatch, t])
 
   return (
     <>
-      {isChannelsLoading || isMessagesLoading
+      {isLoading
         ? (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
               <Spinner animation="border" variant="primary" />
             </div>
           )
         : (
-            <MessageFormFocusProvider>
+            <>
               <Container className="h-100 my-4 overflow-hidden rounded shadow">
                 <Row className="h-100 bg-white flex-md-row">
                   <Channels />
@@ -88,10 +85,38 @@ const ChatPage = () => {
                 </Row>
               </Container>
               <Modal />
-            </MessageFormFocusProvider>
+            </>
           )}
     </>
   )
 }
 
 export default ChatPage
+
+// useEffect(() => {
+//   if (!channelsData && !messagesData) {
+//     return
+//   }
+//   if (channelsData && channelsData.length > 0) {
+//     dispatch(channelsActions.setChannels(channelsData))
+//     const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
+//     dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+//   }
+
+//   if (messagesData && messagesData.length > 0) {
+//     dispatch(messagesActions.setMessages(messagesData))
+//   }
+// })
+
+// useEffect(() => {
+//   console.log('запуск useEffect')
+//   if (channelsData && channelsData.length > 0) {
+//     dispatch(channelsActions.setChannels(channelsData))
+//     const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
+//     dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
+//   }
+
+//   if (messagesData && messagesData.length > 0) {
+//     dispatch(messagesActions.setMessages(messagesData))
+//   }
+// }, [dispatch, channelsData, messagesData, openChannelId])

@@ -22,7 +22,6 @@ export default (store, socket) => {
   socket.on('renameChannel', payload => store.dispatch(channelsActions.renameChannel(payload)))
   socket.on('removeChannel', payload => store.dispatch(channelsActions.removeChannel(payload)))
 
-  // // 3. Рендеринг приложения
   // const root = createRoot(rootElement)
   // root.render(
   //   <StrictMode>

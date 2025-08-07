@@ -8,9 +8,9 @@ import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 
 import { actions as authActions } from '../slices/authSlice.js'
-import { useAddUserMutation } from '../services/authApi.js'
 import validator from '../utils/signupValidator.js'
 import avatarImage from '../assets/avatar-signup.jpg'
+import apiRequests from '../services/api.js'
 
 const FormGroup = ({ name, formik, t, signupFailed, inputRef, type = 'text' }) => {
   return (
@@ -47,8 +47,8 @@ const SignupPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [addUser, { isLoading }] = useAddUserMutation()
   const [signupFailed, setSignupFailed] = useState(false)
+  const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
     inputUsername.current.focus()
@@ -64,14 +64,15 @@ const SignupPage = () => {
     validateOnBlur: true,
     onSubmit: async ({ username, password }) => {
       try {
-        setSignupFailed(false)
+        setLoading(true)
         const newUser = { username, password }
-        const userData = await addUser(newUser).unwrap()
+        const userData = await apiRequests.signup(newUser)
         localStorage.setItem('userId', JSON.stringify(userData))
         dispatch(authActions.logIn(userData))
         navigate('/')
       }
       catch (err) {
+        setLoading(false)
         if (err.status === 409) {
           setSignupFailed(true)
           inputUsername.current.focus()

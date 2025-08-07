@@ -8,16 +8,16 @@ import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 
 import { actions as authActions } from '../slices/authSlice.js'
-import { useLogInMutation } from '../services/authApi.js'
 import avatarImage from '../assets/avatar-login.jpg'
+import apiRequests from '../services/api.js'
 
 const LoginPage = () => {
   const inputUsername = useRef()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [logIn, { isLoading }] = useLogInMutation()
   const [authFailed, setAuthFailed] = useState(false)
+  const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
     inputUsername.current.focus()
@@ -31,18 +31,24 @@ const LoginPage = () => {
     onSubmit: async (values) => {
       try {
         setAuthFailed(false)
-        const userData = await logIn(values).unwrap()
+        setLoading(true)
+        const userData = await apiRequests.login(values)
         localStorage.setItem('userId', JSON.stringify(userData))
         dispatch(authActions.logIn(userData))
         navigate('/')
       }
       catch (err) {
+        setLoading(false)
         if (err.status === 401) {
           setAuthFailed(true)
           inputUsername.current.focus()
           return
         }
-        toast.error(t('login.popUp.fetchError'))
+        toast.error(
+          <div role="alert" className="Toastify__toast-body">
+            {t('login.popUp.fetchError')}
+          </div>,
+        )
         throw err
       }
     },

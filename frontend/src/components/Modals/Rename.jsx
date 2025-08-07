@@ -1,29 +1,26 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useRef, useContext } from 'react'
+import { useEffect, useRef, useContext, useState } from 'react'
 import { useFormik } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import { Modal, Button, Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
-// import { profanityFilter } from '../../init.js'
 
 import ContentFilterContext from '../../contexts/ContentFilterContext.jsx'
-import MessageFormFocusContext from '../../contexts/MessageFormFocusContext.jsx'
-
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
-import { useRenameChannelMutation } from '../../services/channelsApi.js'
 import validator from '../../utils/channelsValidator.js'
+import apiRequests from '../../services/api.js'
 
 const Rename = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const profanityFilter = useContext(ContentFilterContext)
-  const { setFocus } = useContext(MessageFormFocusContext)
-  const [renameChannel, { isLoading }] = useRenameChannelMutation()
 
+  const [isLoading, setLoading] = useState(false)
   const channels = useSelector(state => state.channels.channels)
   const currentChannel = useSelector(state => state.modals.item)
+  const userToken = useSelector(state => state.authorization?.token)
 
   useEffect(() => inputRef.current.select(), [])
 
@@ -32,20 +29,29 @@ const Rename = () => {
   }
 
   const formik = useFormik({
-    initialValues: { name: profanityFilter(currentChannel.name) },
+    initialValues: { body: profanityFilter(currentChannel.name) },
     validationSchema: validator(channels),
     onSubmit: async (values) => {
       try {
+        setLoading(true)
         const editedChannel = { name: values.body }
         const id = currentChannel.id
-        await renameChannel({ id, editedChannel }).unwrap()
+        await apiRequests.editChannel(userToken, id, editedChannel)
         handleClose()
-        toast.success(t('chat.popUp.renameChannel'))
-        setTimeout(() => setFocus(), 100)
+        toast.success(
+          <div role="alert" className="Toastify__toast-body">
+            {t('chat.popUp.renameChannel')}
+          </div>,
+        )
       }
       catch (err) {
+        setLoading(false)
         handleClose()
-        toast.error(t('chat.popUp.fetchError'))
+        toast.error(
+          <div role="alert" className="Toastify__toast-body">
+            {t('chat.popUp.fetchError')}
+          </div>,
+        )
         throw err
       }
     },

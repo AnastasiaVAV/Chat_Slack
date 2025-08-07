@@ -10,13 +10,11 @@ import cn from 'classnames'
 
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
-import MessageFormFocusContext from '../../contexts/MessageFormFocusContext.jsx'
 import ContentFilterContext from '../../contexts/ContentFilterContext.jsx'
 
 const Channels = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const { setFocus } = useContext(MessageFormFocusContext)
   const profanityFilter = useContext(ContentFilterContext)
 
   const channelsState = useSelector(state => state.channels.channels)
@@ -28,7 +26,6 @@ const Channels = () => {
 
   const handleChangeOpenChannel = (id) => {
     dispatch(channelsActions.setOpenChannelId(id))
-    setFocus()
   }
 
   const handleOpenModal = (type, item = null) => dispatch(modalsActions.openModal({ type, item }))

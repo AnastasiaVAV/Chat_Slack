@@ -5,9 +5,9 @@ import channelsSlice from './channelsSlice.js'
 import messagesSlice from './messagesSlice.js'
 import modalsSlice from './modalsSlice.js'
 
-import { authApi } from '../services/authApi.js'
-import { channelsApi } from '../services/channelsApi.js'
-import { messagesApi } from '../services/messagesApi.js'
+// import { authApi } from '../services/authApi.js'
+// import { channelsApi } from '../services/channelsApi.js'
+// import { messagesApi } from '../services/messagesApi.js'
 
 export default configureStore({
   reducer: {
@@ -15,13 +15,13 @@ export default configureStore({
     channels: channelsSlice,
     messages: messagesSlice,
     modals: modalsSlice,
-    [authApi.reducerPath]: authApi.reducer,
-    [channelsApi.reducerPath]: channelsApi.reducer,
-    [messagesApi.reducerPath]: messagesApi.reducer,
+    // [authApi.reducerPath]: authApi.reducer,
+    // [channelsApi.reducerPath]: channelsApi.reducer,
+    // [messagesApi.reducerPath]: messagesApi.reducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(
-    authApi.middleware,
-    channelsApi.middleware,
-    messagesApi.middleware,
-  ),
+  // middleware: getDefaultMiddleware => getDefaultMiddleware().concat(
+  //   authApi.middleware,
+  //   channelsApi.middleware,
+  //   messagesApi.middleware,
+  // ),
 })

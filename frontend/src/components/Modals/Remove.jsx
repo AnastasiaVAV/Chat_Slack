@@ -1,18 +1,20 @@
 import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Modal, Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
-import { useRemoveChannelMutation } from '../../services/channelsApi.js'
+import apiRequests from '../../services/api.js'
 
 const Remove = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const [removeChannel, { isLoading }] = useRemoveChannelMutation()
+  const [isLoading, setLoading] = useState(false)
 
   const currentChannel = useSelector(state => state.modals.item)
+  const userToken = useSelector(state => state.authorization?.token)
 
   const handleClose = () => {
     dispatch(modalsActions.hideModal())
@@ -20,14 +22,24 @@ const Remove = () => {
 
   const handleRemoveChannel = async () => {
     try {
+      setLoading(true)
       const id = currentChannel.id
-      await removeChannel(id).unwrap()
+      await apiRequests.removeChannel(userToken, id)
       handleClose()
-      toast.success(t('chat.popUp.removeChannel'))
+      toast.success(
+        <div role="alert" className="Toastify__toast-body">
+          {t('chat.popUp.removeChannel')}
+        </div>,
+      )
     }
     catch (err) {
+      setLoading(false)
       handleClose()
-      toast.error(t('chat.popUp.fetchError'))
+      toast.error(
+        <div role="alert" className="Toastify__toast-body">
+          {t('chat.popUp.fetchError')}
+        </div>,
+      )
       throw err
     }
   }

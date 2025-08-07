@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 
 import store from './slices/index.js'
@@ -13,6 +13,15 @@ import LoginPage from './components/LoginPage.jsx'
 import ChatPage from './components/ChatPage.jsx'
 import SignupPage from './components/SignupPage.jsx'
 
+const MainComponent = () => {
+  const userToken = useSelector(state => state.authorization?.token)
+  return (
+    <>
+      {userToken ? <ChatPage /> : <LoginPage />}
+    </>
+  )
+}
+
 const App = () => {
   return (
     <RollbarProvider>
@@ -24,7 +33,7 @@ const App = () => {
             </div>
             <Routes>
               <Route path="/" element={<MainPage />}>
-                <Route index element={<ChatPage />} />
+                <Route index element={<MainComponent />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="signup" element={<SignupPage />} />
                 <Route path="*" element={<NotFoundPage />} />

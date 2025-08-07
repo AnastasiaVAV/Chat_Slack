@@ -1,0 +1,41 @@
+# Query: state.authorization
+# Flags: CaseSensitive
+# Including: ./frontend-project-12
+# ContextLines: 1
+
+Результаты: 7 - Файлы 7
+
+frontend-project-12 • frontend/src/App.jsx:
+  16  const MainComponent = () => {
+  17:   const userToken = useSelector(state => state.authorization?.token)
+  18    return (
+
+frontend-project-12 • frontend/src/components/ChatPage.jsx:
+  32  
+  33:   const user = useSelector(state => state.authorization?.token)
+  34    const [isLoading, setLoading] = useState(true)
+
+frontend-project-12 • frontend/src/components/MainPage.jsx:
+  8    const dispatch = useDispatch()
+  9:   const user = useSelector(state => state.authorization?.token)
+  10  
+
+frontend-project-12 • frontend/src/components/Chat/MessagesForm.jsx:
+  14  
+  15:   const user = useSelector(state => state.authorization?.token)
+  16    const openChannelId = useSelector(state => state.channels.openChannelId)
+
+frontend-project-12 • frontend/src/components/Modals/Add.jsx:
+  21    const channels = useSelector(state => state.channels.channels)
+  22:   const userToken = useSelector(state => state.authorization?.token)
+  23  
+
+frontend-project-12 • frontend/src/components/Modals/Remove.jsx:
+  16    const currentChannel = useSelector(state => state.modals.item)
+  17:   const userToken = useSelector(state => state.authorization?.token)
+  18  
+
+frontend-project-12 • frontend/src/components/Modals/Rename.jsx:
+  22    const currentChannel = useSelector(state => state.modals.item)
+  23:   const userToken = useSelector(state => state.authorization?.token)
+  24  
