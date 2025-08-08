@@ -30,22 +30,6 @@ const MainPage = () => {
                 </button>
               )}
             </Container>
-            {/* <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => {
-                throw new Error('Тестовая ошибка для Rollbar')
-              }}
-            >
-              Ошибка
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => { Promise.reject('Тест Promise') }}
-            >
-              Promise
-            </button> */}
           </nav>
           <Outlet />
         </Col>

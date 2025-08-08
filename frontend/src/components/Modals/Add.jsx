@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Modal, Button, Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import ToastMessage from '../ToastMessage.jsx'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
@@ -21,7 +22,7 @@ const Add = () => {
   const channels = useSelector(state => state.channels.channels)
   const userToken = useSelector(state => state.authorization?.token)
 
-  useEffect(() => inputRef.current?.focus(), [])
+  useEffect(() => inputRef.current.focus(), [])
 
   const handleClose = () => {
     dispatch(modalsActions.hideModal())
@@ -35,23 +36,24 @@ const Add = () => {
         setLoading(true)
         const newChannel = { name: values.body }
         const channelData = await apiRequests.addChannel(userToken, newChannel)
-        handleClose()
         dispatch(channelsActions.setOpenChannelId(channelData.id))
         toast.success(
-          <div role="alert" className="Toastify__toast-body">
+          <ToastMessage>
             {t('chat.popUp.addChannel')}
-          </div>,
+          </ToastMessage>,
         )
       }
       catch (err) {
-        setLoading(false)
-        handleClose()
         toast.error(
-          <div role="alert" className="Toastify__toast-body">
+          <ToastMessage>
             {t('chat.popUp.fetchError')}
-          </div>,
+          </ToastMessage>,
         )
         throw err
+      }
+      finally {
+        handleClose()
+        setLoading(false)
       }
     },
   })

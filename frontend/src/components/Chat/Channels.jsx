@@ -6,7 +6,6 @@ import { Dropdown } from 'react-bootstrap'
 import { Col } from 'react-bootstrap'
 
 import cn from 'classnames'
-// import { profanityFilter } from '../../init.js'
 
 import { actions as channelsActions } from '../../slices/channelsSlice.js'
 import { actions as modalsActions } from '../../slices/modalsSlice.js'

@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -13,6 +12,7 @@ import Channels from './Chat/Channels'
 import Messages from './Chat/Messages.jsx'
 import MessagesForm from './Chat/MessagesForm.jsx'
 import getModal from './Modals/index.js'
+import ToastMessage from './ToastMessage.jsx'
 
 import apiRequests from '../services/api.js'
 
@@ -28,7 +28,6 @@ const Modal = () => {
 const ChatPage = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-  const navigate = useNavigate()
 
   const userToken = useSelector(state => state.authorization?.token)
   const [isLoading, setLoading] = useState(true)
@@ -39,29 +38,24 @@ const ChatPage = () => {
         const channelsData = await apiRequests.getChannels(userToken)
         const messagesData = await apiRequests.getMessages(userToken)
 
-        if (channelsData?.length > 0) {
-          dispatch(channelsActions.setChannels(channelsData))
-          const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-          dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
-        }
+        if (channelsData?.length > 0) dispatch(channelsActions.setChannels(channelsData))
 
-        if (messagesData?.length > 0) {
-          dispatch(messagesActions.setMessages(messagesData))
-        }
+        if (messagesData?.length > 0) dispatch(messagesActions.setMessages(messagesData))
+      }
+      catch (err) {
+        toast.error(
+          <ToastMessage>
+            {t('chat.popUp.fetchError')}
+          </ToastMessage>,
+        )
+        throw err
+      }
+      finally {
         setLoading(false)
       }
-      catch (error) {
-        console.error('Ошибка загрузки данных:', error)
-        toast.error(
-          <div role="alert" className="Toastify__toast-body">
-            {t('chat.popUp.fetchError')}
-          </div>,
-        )
-      }
     }
-
     fetchData()
-  }, [userToken, navigate, dispatch, t])
+  }, [userToken, dispatch, t])
 
   return (
     <>
@@ -92,31 +86,3 @@ const ChatPage = () => {
 }
 
 export default ChatPage
-
-// useEffect(() => {
-//   if (!channelsData && !messagesData) {
-//     return
-//   }
-//   if (channelsData && channelsData.length > 0) {
-//     dispatch(channelsActions.setChannels(channelsData))
-//     const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-//     dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
-//   }
-
-//   if (messagesData && messagesData.length > 0) {
-//     dispatch(messagesActions.setMessages(messagesData))
-//   }
-// })
-
-// useEffect(() => {
-//   console.log('запуск useEffect')
-//   if (channelsData && channelsData.length > 0) {
-//     dispatch(channelsActions.setChannels(channelsData))
-//     const defaultChannel = channelsData.find(({ name }) => name === 'General') ?? channelsData[0]
-//     dispatch(channelsActions.setOpenChannelId(defaultChannel.id))
-//   }
-
-//   if (messagesData && messagesData.length > 0) {
-//     dispatch(messagesActions.setMessages(messagesData))
-//   }
-// }, [dispatch, channelsData, messagesData, openChannelId])

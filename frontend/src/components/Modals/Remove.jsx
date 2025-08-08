@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Modal, Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import ToastMessage from '../ToastMessage.jsx'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import apiRequests from '../../services/api.js'
@@ -25,22 +26,23 @@ const Remove = () => {
       setLoading(true)
       const id = currentChannel.id
       await apiRequests.removeChannel(userToken, id)
-      handleClose()
       toast.success(
-        <div role="alert" className="Toastify__toast-body">
+        <ToastMessage>
           {t('chat.popUp.removeChannel')}
-        </div>,
+        </ToastMessage>,
       )
     }
     catch (err) {
-      setLoading(false)
-      handleClose()
       toast.error(
-        <div role="alert" className="Toastify__toast-body">
+        <ToastMessage>
           {t('chat.popUp.fetchError')}
-        </div>,
+        </ToastMessage>,
       )
       throw err
+    }
+    finally {
+      handleClose()
+      setLoading(false)
     }
   }
 

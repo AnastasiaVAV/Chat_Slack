@@ -6,11 +6,9 @@ const messagesSlice = createSlice({
   initialState: [], // {body: '1', channelId: '1', username: 'admin', removable: true, id: '5'}
   reducers: {
     setMessages: (state, { payload }) => { // []
-      console.log('messages:', payload)
       return payload
     },
-    addMessage: (state, { payload }) => { // {body: '2', channelId: '1', username: 'admin', removable: true, id: '13'}
-      console.log('new message:', payload)
+    addMessage: (state, { payload }) => { // { body, channelId, username, removable, id }
       state.push(payload)
     },
   },

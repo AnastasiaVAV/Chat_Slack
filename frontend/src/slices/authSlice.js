@@ -6,7 +6,7 @@ const authSlice = createSlice({
   name: 'authorization',
   initialState,
   reducers: {
-    logIn: (state, { payload }) => {
+    logIn: (state, { payload }) => { // { username: 'newUser', password: '123456' }
       return payload
     },
     logOut: () => {

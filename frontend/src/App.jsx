@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { Provider, useSelector } from 'react-redux'
+import { useEffect } from 'react'
 import { ToastContainer } from 'react-toastify'
 
 import store from './slices/index.js'
@@ -13,13 +14,17 @@ import LoginPage from './components/LoginPage.jsx'
 import ChatPage from './components/ChatPage.jsx'
 import SignupPage from './components/SignupPage.jsx'
 
-const MainComponent = () => {
+const ProtectedRoute = ({ children }) => {
   const userToken = useSelector(state => state.authorization?.token)
-  return (
-    <>
-      {userToken ? <ChatPage /> : <LoginPage />}
-    </>
-  )
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!userToken) {
+      navigate('/login')
+    }
+  }, [userToken, navigate])
+
+  return userToken && children
 }
 
 const App = () => {
@@ -33,7 +38,14 @@ const App = () => {
             </div>
             <Routes>
               <Route path="/" element={<MainPage />}>
-                <Route index element={<MainComponent />} />
+                <Route
+                  index
+                  element={(
+                    <ProtectedRoute>
+                      <ChatPage />
+                    </ProtectedRoute>
+                  )}
+                />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="signup" element={<SignupPage />} />
                 <Route path="*" element={<NotFoundPage />} />

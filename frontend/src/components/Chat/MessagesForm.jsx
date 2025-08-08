@@ -2,7 +2,6 @@ import { useSelector } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFormik } from 'formik'
-import { toast } from 'react-toastify'
 
 import apiRequests from '../../services/api.js'
 
@@ -35,11 +34,6 @@ const MessagesForm = () => {
       catch (err) {
         resetForm()
         inputRef.current.focus()
-        toast.success(
-          <div role="alert" className="Toastify__toast-body">
-            {t('chat.popUp.addChannel')}
-          </div>,
-        )
         throw err
       }
     },

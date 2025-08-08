@@ -6,13 +6,14 @@ import { useTranslation, Trans } from 'react-i18next'
 
 import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import ToastMessage from './ToastMessage.jsx'
 
 import { actions as authActions } from '../slices/authSlice.js'
 import avatarImage from '../assets/avatar-login.jpg'
 import apiRequests from '../services/api.js'
 
 const LoginPage = () => {
-  const inputUsername = useRef()
+  const inputRef = useRef()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -20,7 +21,7 @@ const LoginPage = () => {
   const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
-    inputUsername.current.focus()
+    inputRef.current.focus()
   }, [])
 
   const formik = useFormik({
@@ -38,18 +39,20 @@ const LoginPage = () => {
         navigate('/')
       }
       catch (err) {
-        setLoading(false)
         if (err.status === 401) {
           setAuthFailed(true)
-          inputUsername.current.focus()
+          inputRef.current.focus()
           return
         }
         toast.error(
-          <div role="alert" className="Toastify__toast-body">
+          <ToastMessage>
             {t('login.popUp.fetchError')}
-          </div>,
+          </ToastMessage>,
         )
         throw err
+      }
+      finally {
+        setLoading(false)
       }
     },
   })
@@ -76,7 +79,7 @@ const LoginPage = () => {
                     id="username"
                     autoComplete="username"
                     required
-                    ref={inputUsername}
+                    ref={inputRef}
                     isInvalid={authFailed}
                   />
                   <Form.Label className="form-label" htmlFor="username">

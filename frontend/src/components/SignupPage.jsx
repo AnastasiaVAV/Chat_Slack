@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Button, Form, Container, Card, Row, Col } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import ToastMessage from './ToastMessage.jsx'
 
 import { actions as authActions } from '../slices/authSlice.js'
 import validator from '../utils/signupValidator.js'
@@ -43,7 +44,7 @@ const FormGroup = ({ name, formik, t, signupFailed, inputRef, type = 'text' }) =
 }
 
 const SignupPage = () => {
-  const inputUsername = useRef()
+  const inputRef = useRef()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -51,7 +52,7 @@ const SignupPage = () => {
   const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
-    inputUsername.current.focus()
+    inputRef.current.focus()
   }, [])
 
   const formik = useFormik({
@@ -75,10 +76,14 @@ const SignupPage = () => {
         setLoading(false)
         if (err.status === 409) {
           setSignupFailed(true)
-          inputUsername.current.focus()
+          inputRef.current.focus()
           return
         }
-        toast.error(t('signup.popUp.fetchError'))
+        toast.error(
+          <ToastMessage>
+            {t('signup.popUp.fetchError')}
+          </ToastMessage>,
+        )
         throw err
       }
     },
@@ -100,7 +105,7 @@ const SignupPage = () => {
                   formik={formik}
                   t={t}
                   signupFailed={signupFailed}
-                  inputRef={inputUsername}
+                  inputRef={inputRef}
                 />
                 <FormGroup
                   name="password"

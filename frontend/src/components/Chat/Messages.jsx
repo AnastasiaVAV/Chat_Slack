@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { useContext } from 'react'
 
-// import { profanityFilter } from '../../init'
 import ContentFilterContext from '../../contexts/ContentFilterContext.jsx'
 
 const Messages = () => {
@@ -10,7 +9,7 @@ const Messages = () => {
   const profanityFilter = useContext(ContentFilterContext)
 
   const openChannelId = useSelector(state => state.channels.openChannelId)
-  const openChannel = useSelector(state => state.channels.channels).find(channel => channel.id === openChannelId)
+  const openChannel = useSelector(state => state.channels.channels).find(({ id }) => id === openChannelId)
   const currentMessagesState = useSelector(state => state.messages).filter(({ channelId }) => channelId === openChannelId)
 
   return (

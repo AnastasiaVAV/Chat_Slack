@@ -9,8 +9,7 @@ const modalSlice = createSlice({
   name: 'modals',
   initialState,
   reducers: {
-    openModal: (state, { payload }) => {
-      console.log('modal:', payload)
+    openModal: (state, { payload }) => { // { type, item }
       return { type: payload.type, item: payload.item || null }
     },
     hideModal: () => {
