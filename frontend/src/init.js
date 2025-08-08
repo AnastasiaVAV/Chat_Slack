@@ -1,14 +1,13 @@
-// import { StrictMode } from 'react'
-// import { createRoot } from 'react-dom/client'
-// import { Provider } from 'react-redux'
+import { createRoot } from 'react-dom/client'
+
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import resources from './locales/index.js'
-// import App from './App.jsx'
+
 import { actions as channelsActions } from './slices/channelsSlice.js'
 import { actions as messagesActions } from './slices/messagesSlice.js'
 
-export default (store, socket) => {
+export default (store, socket, rootElement) => {
   const i18nInstance = i18next.createInstance()
   i18nInstance.use(initReactI18next).init({
     resources,
@@ -22,14 +21,5 @@ export default (store, socket) => {
   socket.on('renameChannel', payload => store.dispatch(channelsActions.renameChannel(payload)))
   socket.on('removeChannel', payload => store.dispatch(channelsActions.removeChannel(payload)))
 
-  // const root = createRoot(rootElement)
-  // root.render(
-  //   <StrictMode>
-  //     <Provider store={store}>
-  //       <App />
-  //     </Provider>
-  //   </StrictMode>,
-  // )
-
-  // return { i18n: i18nInstance }
+  return createRoot(rootElement)
 }
