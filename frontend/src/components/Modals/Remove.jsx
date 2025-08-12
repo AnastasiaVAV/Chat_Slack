@@ -8,14 +8,15 @@ import ToastMessage from '../ToastMessage.jsx'
 
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import apiRequests from '../../services/api.js'
+import useAuth from '../../hooks/useAuth.js'
 
 const Remove = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const [isLoading, setLoading] = useState(false)
 
+  const { userToken } = useAuth()
   const currentChannel = useSelector(state => state.modals.item)
-  const userToken = useSelector(state => state.authorization?.token)
 
   const handleClose = () => {
     dispatch(modalsActions.hideModal())

@@ -15,6 +15,7 @@ import getModal from './Modals/index.js'
 import ToastMessage from './ToastMessage.jsx'
 
 import apiRequests from '../services/api.js'
+import useAuth from '../hooks/useAuth.js'
 
 const Modal = () => {
   const { type } = useSelector(state => state.modals)
@@ -28,8 +29,7 @@ const Modal = () => {
 const ChatPage = () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
-
-  const userToken = useSelector(state => state.authorization?.token)
+  const { userToken } = useAuth()
   const [isLoading, setLoading] = useState(true)
 
   useEffect(() => {

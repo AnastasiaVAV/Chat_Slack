@@ -11,17 +11,18 @@ import ContentFilterContext from '../../contexts/ContentFilterContext.jsx'
 import { actions as modalsActions } from '../../slices/modalsSlice.js'
 import validator from '../../utils/channelsValidator.js'
 import apiRequests from '../../services/api.js'
+import useAuth from '../../hooks/useAuth.js'
 
 const Rename = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const profanityFilter = useContext(ContentFilterContext)
-
   const [isLoading, setLoading] = useState(false)
+
+  const { userToken } = useAuth()
   const channels = useSelector(state => state.channels.channels)
   const currentChannel = useSelector(state => state.modals.item)
-  const userToken = useSelector(state => state.authorization?.token)
 
   useEffect(() => inputRef.current.select(), [])
 

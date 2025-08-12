@@ -3,13 +3,15 @@ import { Container, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { actions as authActions } from '../slices/authSlice.js'
+import useAuth from '../hooks/useAuth.js'
 
 const MainPage = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.authorization)
+  const { logOut } = useAuth()
 
   const handleLogout = () => {
-    localStorage.removeItem('userId')
+    logOut()
     dispatch(authActions.logOut())
   }
 

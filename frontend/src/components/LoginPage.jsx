@@ -11,12 +11,14 @@ import ToastMessage from './ToastMessage.jsx'
 import { actions as authActions } from '../slices/authSlice.js'
 import avatarImage from '../assets/avatar-login.jpg'
 import apiRequests from '../services/api.js'
+import useAuth from '../hooks/useAuth.js'
 
 const LoginPage = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { logIn } = useAuth()
   const [authFailed, setAuthFailed] = useState(false)
   const [isLoading, setLoading] = useState(false)
 
@@ -34,7 +36,7 @@ const LoginPage = () => {
         setAuthFailed(false)
         setLoading(true)
         const userData = await apiRequests.login(values)
-        localStorage.setItem('userId', JSON.stringify(userData))
+        logIn(userData)
         dispatch(authActions.logIn(userData))
         navigate('/')
       }

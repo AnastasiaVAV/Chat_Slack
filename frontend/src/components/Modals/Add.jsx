@@ -12,15 +12,15 @@ import { actions as channelsActions } from '../../slices/channelsSlice.js'
 
 import validator from '../../utils/channelsValidator.js'
 import apiRequests from '../../services/api.js'
+import useAuth from '../../hooks/useAuth.js'
 
 const Add = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { t } = useTranslation()
   const [isLoading, setLoading] = useState(false)
-
+  const { userToken } = useAuth()
   const channels = useSelector(state => state.channels.channels)
-  const userToken = useSelector(state => state.authorization?.token)
 
   useEffect(() => inputRef.current.focus(), [])
 
