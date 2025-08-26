@@ -30,9 +30,6 @@ Cсылка на проект – https://frontend-project-12-bqe1.onrender.com
 - `leo-profanity` – цензурирование сообщений и названий каналов
 - `react-toastify` – всплывающие уведомления
 
-## Демонстрация работы
-![Демонстрация работы RSS-aggregator](./src/assets/RSS_aggregator.gif)
-
 ## Установка и запуск
 Все команды выполняются в корне проекта.
 
@@ -55,3 +52,13 @@ Production сборка:
 ```bash
 cd frontend && npm run build
 ```
+
+## Демонстрация работы
+### Вход
+![Вход](./assets/entry.gif)
+
+### Изменение, удаление канала
+![Изменение канала](./assets/change-channel.gif)
+
+### Отправка сообщений
+![Сообщения](./assets/messages.gif)
